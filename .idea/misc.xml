@@ -5,6 +5,8 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/API-Testing/pom.xml" />
+        <option value="$PROJECT_DIR$/API_Testing/pom.xml" />
+        <option value="$PROJECT_DIR$/UI_Testing/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
