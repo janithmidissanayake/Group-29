@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.group_29</groupId>
-    <artifactId>group-29-API-Testing</artifactId>
+    <artifactId>UI_Testing</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
