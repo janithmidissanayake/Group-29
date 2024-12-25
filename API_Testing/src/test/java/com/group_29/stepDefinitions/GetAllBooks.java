@@ -34,6 +34,7 @@
 package com.group_29.stepDefinitions;
 
 import io.cucumber.java.en.Given;
+import com.group_29.utils.ConfigLoader;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -45,20 +46,35 @@ import java.util.List;
 public class GetAllBooks {
     private Response response;
 
+//    @Given("the GetAllbooks API is up and running")
+//    public void apiIsUpAndRunning() {
+//        RestAssured.baseURI = "http://localhost:7081"; // Update base URL if needed
+//    }
     @Given("the GetAllbooks API is up and running")
     public void apiIsUpAndRunning() {
-        RestAssured.baseURI = "http://localhost:7081"; // Update base URL if needed
-    }
+        RestAssured.baseURI = ConfigLoader.getProperty("base_url"); // Load base URL from properties file
+}
 
-    @When("I send a GETBooks request to {string} with username {string} and password {string}")
-    public void sendGetBooksRequestWithAuth(String endpoint, String username, String password) {
+    @When("I send a GETBooks request to {string}")
+    public void sendGetRequest(String endpoint) {
+        String username = ConfigLoader.getProperty("username");
+        String password = ConfigLoader.getProperty("password");
+
         response = RestAssured
                 .given()
                 .auth()
-                .basic(username, password) // Add Basic Authentication
+                .basic(username, password) // Use credentials from properties file
                 .when()
                 .get(endpoint);
     }
+//    public void sendGetBooksRequestWithAuth(String endpoint, String username, String password) {
+//        response = RestAssured
+//                .given()
+//                .auth()
+//                .basic(username, password) // Add Basic Authentication
+//                .when()
+//                .get(endpoint);
+//    }
 
     @Then("the GetBooks response status code should be {int}")
     public void verifyGetBooksStatusCode(int expectedStatusCode) {
