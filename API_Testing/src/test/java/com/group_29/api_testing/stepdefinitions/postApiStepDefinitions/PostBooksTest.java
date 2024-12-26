@@ -1,4 +1,4 @@
-package com.group_29.api_testing.stepdefinitions.updateApiStepDefinitions;
+package com.group_29.api_testing.stepdefinitions.postApiStepDefinitions;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
