@@ -31,7 +31,7 @@
 //    }
 //}
 
-package com.group_29.stepDefinitions;
+package com.group_29.api_testing.stepDefinitions.getApiStepDefinitions;
 
 import io.cucumber.java.en.Given;
 import com.group_29.utils.ConfigLoader;

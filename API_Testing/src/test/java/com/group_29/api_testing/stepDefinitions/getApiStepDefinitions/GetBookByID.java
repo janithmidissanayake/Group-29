@@ -1,4 +1,4 @@
-package com.group_29.stepDefinitions;
+package com.group_29.api_testing.stepDefinitions.getApiStepDefinitions;
 
 import com.group_29.utils.ConfigLoader;
 import io.cucumber.java.en.*;
