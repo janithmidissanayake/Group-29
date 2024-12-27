@@ -55,10 +55,10 @@ public class GetAllBooks {
         RestAssured.baseURI = ConfigLoader.getProperty("base_url"); // Load base URL from properties file
 }
 
-    @When("I send a GETBooks request to {string}")
-    public void sendGetRequest(String endpoint) {
-        String username = ConfigLoader.getProperty("username");
-        String password = ConfigLoader.getProperty("password");
+    @When("I send a valid credential GETBooks request to {string}")
+    public void sendValidCredentialGetRequest(String endpoint) {
+        String username = ConfigLoader.getProperty("valid_username");
+        String password = ConfigLoader.getProperty("valid_password");
 
         response = RestAssured
                 .given()
@@ -76,8 +76,8 @@ public class GetAllBooks {
 //                .get(endpoint);
 //    }
 
-    @Then("the GetBooks response status code should be {int}")
-    public void verifyGetBooksStatusCode(int expectedStatusCode) {
+    @Then("the valid credential GetBooks response status code should be {int}")
+    public void verifyValidCredentialGetBooksStatusCode(int expectedStatusCode) {
         Assert.assertEquals(response.getStatusCode(), expectedStatusCode, "Unexpected status code!");
     }
 
@@ -90,7 +90,26 @@ public class GetAllBooks {
             Assert.assertTrue(books.isEmpty(), "Expected no books, but the list is not empty!");
         } else {
             System.out.println("Books are available in the system.");
+            System.out.println("Book details: " + response.getBody().asString());
             Assert.assertTrue(books.size() > 0, "Expected books, but found none!");
         }
+    }
+
+    @When("I send an invalid credential GETBooks request to {string}")
+    public void sendInvalidCredentialGetRequest(String endpoint) {
+        String username = ConfigLoader.getProperty("invalid_username");
+        String password = ConfigLoader.getProperty("invalid_password");
+
+        response = RestAssured
+                .given()
+                .auth()
+                .basic(username, password) // Use credentials from properties file
+                .when()
+                .get(endpoint);
+    }
+
+    @Then("the invalid credential GetBooks response status code should be {int}")
+    public void verifyInvalidCredentialGetBooksStatusCode(int expectedStatusCode) {
+        Assert.assertEquals(response.getStatusCode(), expectedStatusCode, "Unexpected status code!");
     }
 }
