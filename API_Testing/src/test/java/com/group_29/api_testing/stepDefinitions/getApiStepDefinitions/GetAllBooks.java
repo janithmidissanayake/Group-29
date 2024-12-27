@@ -24,8 +24,8 @@ public class GetAllBooks {
         String username, password;
 
         if ("valid".equalsIgnoreCase(credentialType)) {
-            username = ConfigLoader.getProperty("valid_username");
-            password = ConfigLoader.getProperty("valid_password");
+            username = ConfigLoader.getProperty("valid_admin_username");
+            password = ConfigLoader.getProperty("valid_admin_password");
         } else {
             username = "invalid_user";
             password = "invalid_pass";
@@ -37,7 +37,8 @@ public class GetAllBooks {
     @Then("the {string} GetBooks response status code should be {int}")
     public void verifyGetBooksResponseStatusCode(String credentialType, int expectedStatusCode) {
         Assert.assertEquals(response.getStatusCode(), expectedStatusCode,
-                credentialType + " credentials: Expected status code " + expectedStatusCode + ", but got " + response.getStatusCode());
+                "For credential type: " + credentialType + " expected status code " + expectedStatusCode +
+                        " but got " + response.getStatusCode());
     }
 
     @Then("the {string} response should contain a list of books or indicate no books are available")

@@ -14,16 +14,29 @@ public class GetBookByID {
     public void apiIsUpAndRunning() {
         RestAssured.baseURI = ConfigLoader.getProperty("base_url");}
 
-    @When("I send a GETBooksByID request to {string}")
+    @When("I send a GETBooksByID request to {string} with admin credentials")
     public void sendGetBookByIDRequest(String endpoint) {
-        String username = ConfigLoader.getProperty("valid_username");
-        String password = ConfigLoader.getProperty("valid_password");
+        String username = ConfigLoader.getProperty("valid_admin_username");
+        String password = ConfigLoader.getProperty("valid_admin_password");
         response = ApiUtils.sendGetRequest(endpoint.replace("{id}", "1"), username, password);
     }
 
-    @Then("the GetBookByID response status code should be {int} or {int}")
-    public void verifyGetBookByIDStatusCode(int expectedStatusCode1, int expectedStatusCode2) {
+    @When("I send a GETBooksByID request to {string} with user credentials")
+    public void sendGetBookByIDRequestWithValidUserCredentials(String endpoint) {
+        String username = ConfigLoader.getProperty("valid_user_username"); // Load valid user credentials
+        String password = ConfigLoader.getProperty("valid_user_password");
+
+        response = ApiUtils.sendGetRequest(endpoint.replace("{id}", "1"), username, password);
+    }
+
+    @Then("the GetBookByID response status code should be {int} or {int} not {int}")
+    public void verifyGetBookByIDStatusCode(int expectedStatusCode1, int expectedStatusCode2,int forbiddenCode) {
         int actualStatusCode = response.getStatusCode();
+
+        if (actualStatusCode == forbiddenCode) {
+
+            Assert.fail("Received 403 Forbidden with valid user credentials, which is a bug!");
+        }
 
         // Validate that the status code is either expected value
         boolean isValidStatusCode = (actualStatusCode == expectedStatusCode1 || actualStatusCode == expectedStatusCode2);
@@ -31,6 +44,7 @@ public class GetBookByID {
         Assert.assertTrue(isValidStatusCode,
                 "Unexpected status code! Expected: " + expectedStatusCode1 + " or " + expectedStatusCode2
                         + " but got: " + actualStatusCode);
+
     }
 
     @Then("the response should contain the book details")
@@ -50,12 +64,10 @@ public class GetBookByID {
         }
     }
 
-
-
     @When("I send a invalid formatted GET request to {string}")
     public void sendInvalidFormattedGetBookByIDRequest(String endpoint) {
-        String username = ConfigLoader.getProperty("valid_username");
-        String password = ConfigLoader.getProperty("valid_password");
+        String username = ConfigLoader.getProperty("valid_admin_username");
+        String password = ConfigLoader.getProperty("valid_admin_password");
         response = ApiUtils.sendGetRequest(endpoint.replace("{id}", "b"), username, password);
 
     }
@@ -76,6 +88,7 @@ public class GetBookByID {
 
         Assert.assertEquals(actualMessage, expectedMessage, "Unexpected response message!");
     }
+
 }
 
 
