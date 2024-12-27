@@ -1,40 +1,8 @@
-//package com.group_29.stepDefinitions;
-//
-//import io.cucumber.java.en.Given;
-//import io.cucumber.java.en.Then;
-//import io.cucumber.java.en.When;
-//import io.restassured.RestAssured;
-//import io.restassured.response.Response;
-//import org.testng.Assert;
-//
-//public class GetAllBooks {
-//    private Response response;
-//
-//    @Given("the API is up and running")
-//    public void apiIsUpAndRunning() {
-//        RestAssured.baseURI = "http://localhost:7081"; // Update base URL if needed
-//    }
-//
-//    @When("I send a GET request to {string}")
-//    public void sendGetRequest(String endpoint) {
-//        response = RestAssured.get(endpoint);
-//    }
-//
-//    @Then("the response status code should be {int}")
-//    public void verifyStatusCode(int expectedStatusCode) {
-//        Assert.assertEquals(response.getStatusCode(), expectedStatusCode, "Unexpected status code!");
-//    }
-//
-//    @Then("the response should contain a list of books")
-//    public void verifyResponseContainsListOfBooks() {
-//        Assert.assertTrue(response.jsonPath().getList("$").size() > 0, "No books found in the response!");
-//    }
-//}
-
 package com.group_29.api_testing.stepDefinitions.getApiStepDefinitions;
 
-import io.cucumber.java.en.Given;
+import com.group_29.utils.ApiUtils;
 import com.group_29.utils.ConfigLoader;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -46,51 +14,46 @@ import java.util.List;
 public class GetAllBooks {
     private Response response;
 
-//    @Given("the GetAllbooks API is up and running")
-//    public void apiIsUpAndRunning() {
-//        RestAssured.baseURI = "http://localhost:7081"; // Update base URL if needed
-//    }
-    @Given("the GetAllbooks API is up and running")
+    @Given("the GetAllBooks API is up and running")
     public void apiIsUpAndRunning() {
         RestAssured.baseURI = ConfigLoader.getProperty("base_url"); // Load base URL from properties file
-}
-
-    @When("I send a GETBooks request to {string}")
-    public void sendGetRequest(String endpoint) {
-        String username = ConfigLoader.getProperty("username");
-        String password = ConfigLoader.getProperty("password");
-
-        response = RestAssured
-                .given()
-                .auth()
-                .basic(username, password) // Use credentials from properties file
-                .when()
-                .get(endpoint);
-    }
-//    public void sendGetBooksRequestWithAuth(String endpoint, String username, String password) {
-//        response = RestAssured
-//                .given()
-//                .auth()
-//                .basic(username, password) // Add Basic Authentication
-//                .when()
-//                .get(endpoint);
-//    }
-
-    @Then("the GetBooks response status code should be {int}")
-    public void verifyGetBooksStatusCode(int expectedStatusCode) {
-        Assert.assertEquals(response.getStatusCode(), expectedStatusCode, "Unexpected status code!");
     }
 
-    @Then("the response should contain a list of books or indicate no books are available")
-    public void verifyResponseContainsListOfBooksOrEmptyMessage() {
-        List<Object> books = response.jsonPath().getList("$");
+    @When("I send a {string} GETBooks request to {string}")
+    public void sendGetBooksRequest(String credentialType, String endpoint) {
+        String username, password;
 
-        if (books.isEmpty()) {
-            System.out.println("No books are available in the system.");
-            Assert.assertTrue(books.isEmpty(), "Expected no books, but the list is not empty!");
+        if ("valid".equalsIgnoreCase(credentialType)) {
+            username = ConfigLoader.getProperty("valid_username");
+            password = ConfigLoader.getProperty("valid_password");
         } else {
-            System.out.println("Books are available in the system.");
-            Assert.assertTrue(books.size() > 0, "Expected books, but found none!");
+            username = "invalid_user";
+            password = "invalid_pass";
+        }
+
+        response = ApiUtils.sendGetRequest(endpoint, username, password);
+    }
+
+    @Then("the {string} GetBooks response status code should be {int}")
+    public void verifyGetBooksResponseStatusCode(String credentialType, int expectedStatusCode) {
+        Assert.assertEquals(response.getStatusCode(), expectedStatusCode,
+                credentialType + " credentials: Expected status code " + expectedStatusCode + ", but got " + response.getStatusCode());
+    }
+
+    @Then("the {string} response should contain a list of books or indicate no books are available")
+    public void verifyResponseContainsListOfBooksOrEmptyMessage(String credentialType) {
+        if ("valid".equalsIgnoreCase(credentialType)) {
+            List<Object> books = response.jsonPath().getList("$");
+
+            if (books.isEmpty()) {
+                System.out.println("No books are available in the system.");
+                Assert.assertTrue(books.isEmpty(), "Expected no books, but the list is not empty!");
+            } else {
+                System.out.println("Books are available in the system.");
+                System.out.println("Book details: " + response.getBody().asString());
+                Assert.assertTrue(books.size() > 0, "Expected books, but found none!");
+            }
         }
     }
+
 }
