@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="API Test Suite">
+    <test name="Book API Tests">
+        <classes>
+            <class name="com.group_29.api_testing.runner.RunCucumberTest"/>
+        </classes>
+    </test>
+</suite>
