@@ -77,17 +77,6 @@ public class GetBookByID {
         Assert.assertEquals(response.getStatusCode(), expectedStatusCode, "Unexpected status code!");
     }
 
-    @Then("the response should contain the message {string}")
-    public void verifyResponseContainsBookDetails(String expectedMessage) {
-        String actualMessage = response.getBody().asString();
-
-        // Check if the response body is empty
-        if (actualMessage.isEmpty()) {
-            actualMessage = "No response body"; // Handle empty body case
-        }
-
-        Assert.assertEquals(actualMessage, expectedMessage, "Unexpected response message!");
-    }
 
 }
 
