@@ -53,21 +53,60 @@ Feature: Update Book API
        """
        Book not found
         """
-#    Scenario: Update a book removing required fields in payload
-#      Given the API base URL is "http://localhost:7081"
-#      And a book exists with id 2
-#      When I send a PUT request to "/api/books/2" with the following payload
-#      """
-#    {
-#      "id": 999,
-#      "title": "JaneDew",
-#    }
+
+
+  Scenario: : Update a book as a user
+    Given the API base URL is "http://localhost:7081"
+    And a book exists with id 2
+    When I send a PUT request to "/api/books/2" as a user with the following payload
+  """
+  {
+    "id": 2,
+    "title": "JaneDew",
+    "author": "John Amith"
+  }
+  """
+    Then the response status code should be 403
+    And the response body should contain an authorization error message:
+  """
+  User is not permitted.
+   """
+
+  Scenario: Validate that numbers are not accepted in title and author fields
+    Given the API base URL is "http://localhost:7081"
+    And a book exists with id 2
+    When I send a PUT request to "/api/books/2" with the following payload
+    """
+    {
+      "id": 2,
+      "title": 1234,
+      "author": 5678
+    }
+    """
+    Then the response status code should be 400
+#    And the response body should contain error message:
 #    """
-#      Then the response status code should be 400
-#      And the response body should contain invalid id error message:
-#       """
-#       Book not found
-#        """
+#    Title must be a string
+#    """
+#    And the response body should contain error message:
+#    """
+#    Author must be a string
+#    """
+
+Scenario: validate with empty string for author and title field
+  Given the API base URL is "http://localhost:7081"
+  And a book exists with id 2
+  When I send a PUT request to "/api/books/2" with the following payload
+    """
+    {
+      "id": 2,
+      "title": "",
+      "author": ""
+    }
+    """
+  Then the response status code should be 400
+
+
 
 
 
