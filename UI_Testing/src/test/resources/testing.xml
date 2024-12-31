@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="TestSuite" parallel="false">
+    <test name="UI_Testing">
+        <classes>
+            <class name="com.group_29.ui_test.utils.BaseTest" />
+            <class name="com.group_29.ui_test.pages.LoginTest"/>
+            <class name="com.group_29.ui_test.pages.RequestLoanTest"/>
+        </classes>
+    </test>
+</suite>
