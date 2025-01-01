@@ -11,4 +11,12 @@ public class ApiUtils {
                 .when()
                 .get(endpoint);
     }
+
+    public static Response sendDeleteRequest(String endpoint, String username, String password) {
+        return RestAssured.given()
+                .auth()
+                .basic(username, password)
+                .when()
+                .delete(endpoint);
+    }
 }
