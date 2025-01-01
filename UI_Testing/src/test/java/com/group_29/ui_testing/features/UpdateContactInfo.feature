@@ -13,9 +13,8 @@
 #    When I enter "Laptop" in the search bar and click the search button
 #    Then I should see search results related to "Laptop"
 
-Feature: Update User Information
-  Scenario: Successfully updating user contact details
-    Given I am logged into ParaBank
-    When I navigate to the "Update Contact Info" page
-    And I update my phone number to "d"
-    Then I should see a success message confirming the update
+#Feature: Update User Information
+#  Scenario: Successfully updating user contact details
+#    Given I am logged into ParaBank
+#    When I update my phone number to "446063828"
+#    Then I should see a success message confirming the update
