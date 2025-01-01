@@ -12,21 +12,21 @@ Feature: Add new book to the system
     Then I should receive a response with status code 201
     And the response should contain the book's id
 
-  Scenario: Admin tries to add a book with an integer as the author
+  Scenario: Admin tries to add a book with an integer as the author(BUG EXPECTED)
     Given I am an admin user
     When I send a POST request to "/api/books" with an integer as the author
     Then I should receive a response with status code 400
     And the response should contain an error message "Invalid data type for author"
 
 
-  Scenario: Admin adds a book with unexpected attributes in the payload
+  Scenario: Admin adds a book with unexpected attributes in the payload(BUG EXPECTED)
     Given I am an admin user
     When I send a POST request to "/api/books" with the book details and additional attributes
     Then I should receive a response with status code 400
     And the response should contain an error message "Unexpected attribute in request body"
 
 
-  Scenario: Admin sends a POST request with missing values in the payload
+  Scenario: Admin sends a POST request with missing values in the payload(BUG EXPECTED)
     Given I am an admin user
     When I send a POST request to "/api/books" with missing values
     Then I should receive a response with status code 400
