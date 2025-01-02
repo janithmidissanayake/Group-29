@@ -26,16 +26,31 @@ jobs:
           distribution: 'temurin'
 
       # Install Google Chrome and ChromeDriver
-      - name: Install Google Chrome and ChromeDriver
+      - name: Install Google Chrome
         run: |
+          sudo mkdir -p /etc/apt/sources.list.d
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-          # Install ChromeDriver (ensure compatibility with Chrome version)
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | sed 's/\./_/g')
-          wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
+          sudo apt-get install google-chrome-stable -y
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@master
+
+      - name: Start ChromeDriver
+        run: |
+          export DISPLAY=:99
+          chromedriver --version
+          google-chrome --version
+          sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+
+      - name: Debug Chrome Setup
+        run: |
+          which google-chrome
+          google-chrome --version
+          which chromedriver
+          chromedriver --version
 
       # Run UI Testing project
       - name: Run UI Tests
