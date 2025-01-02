@@ -28,4 +28,4 @@ Feature: Delete a book from the system
   Scenario: Invalid parameter type for ID in DELETE request
     Given Delete book API is running
     When I send a DELETE request to "/api/books/{id}" with valid admin credentials and invalid parameter type
-    Then I should receive a response for deleting a book with status code 400
+    Then I should receive a response for deleting a book with status code 400
