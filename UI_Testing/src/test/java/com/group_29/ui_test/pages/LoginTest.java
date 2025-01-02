@@ -1,11 +1,10 @@
-package com.group_29.ui_test.pages;
+package com.group_29.ui_testing.pages;
 
-import com.group_29.ui_test.utils.BaseTest;
-import com.group_29.ui_test.utils.ConfigReader;
+import com.group_29.ui_testing.utils.BaseTest;
+import com.group_29.ui_testing.utils.ConfigReader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
-//import org.testng.Assert;
 
 public class LoginTest extends BaseTest {
 
@@ -24,7 +23,7 @@ public class LoginTest extends BaseTest {
         WebElement passwordField = driver.findElement(By.id("password"));
         passwordField.sendKeys(password);
 
-        // Add additional actions such as clicking the login button
+
     }
 
 

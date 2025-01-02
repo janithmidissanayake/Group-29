@@ -1,4 +1,4 @@
-package com.group_29.ui_test.utils;
+package com.group_29.ui_testing.utils;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;

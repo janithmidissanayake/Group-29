@@ -1,4 +1,4 @@
-package com.group_29.ui_test.runner;
+package com.group_29.ui_testing.runner;
 
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;

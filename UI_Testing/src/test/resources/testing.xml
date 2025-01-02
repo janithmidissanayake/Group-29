@@ -2,9 +2,9 @@
 <suite name="TestSuite" parallel="false">
     <test name="UI_Testing">
         <classes>
-            <class name="com.group_29.ui_test.utils.BaseTest" />
-            <class name="com.group_29.ui_test.pages.LoginTest"/>
-            <class name="com.group_29.ui_test.pages.RequestLoanTest"/>
+            <class name="com.group_29.ui_testing.utils.BaseTest" />
+            <class name="com.group_29.ui_testing.pages.LoginTest"/>
+            <class name="com.group_29.ui_testing.pages.RequestLoanTest"/>
         </classes>
     </test>
 </suite>
