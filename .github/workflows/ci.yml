@@ -22,7 +22,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21' # Adjust based on your project requirements
+          java-version: '21'
           distribution: 'temurin'
 
       # Install Google Chrome and ChromeDriver
@@ -73,12 +73,17 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21' # Adjust based on your project requirements
+          java-version: '21'
           distribution: 'temurin'
 
-      # Run API Testing project
-      - name: Run API Tests
+      # Build the API Testing project
+      - name: Build API Testing Project
         working-directory: API_Testing
         run: |
           mvn clean install
-          mvn test
+
+      # Run the JAR file for API testing
+      - name: Run API Tests JAR
+        working-directory: API_Testing/target
+        run: |
+          java -jar demo-0.0.1-SNAPSHOT.jar
