@@ -3,10 +3,10 @@ name: CI Workflow for Multi-Project Repository
 on:
   push:
     branches:
-      - master
+      - charuka-dev
   pull_request:
     branches:
-      - master
+      - charuka-dev
 
 jobs:
   ui_testing:
