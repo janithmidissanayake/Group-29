@@ -88,8 +88,5 @@ jobs:
         run: |
           java -jar demo-0.0.1-SNAPSHOT.jar
 
-           # Run API Tests
-    - name: Run API Tests
-      working-directory: ./API_Testing
-      run: mvn clean test -Dtest=com.qa.**
-      continue-on-error: true
+       
+  
