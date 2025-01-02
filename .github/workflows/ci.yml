@@ -1,0 +1,84 @@
+name: CI Workflow for Multi-Project Repository
+
+on:
+  push:
+    branches:
+      - charuka-dev
+  pull_request:
+    branches:
+      - charuka-dev
+
+jobs:
+  ui_testing:
+    name: UI Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Java environment (JDK 21)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21' # Adjust based on your project requirements
+          distribution: 'temurin'
+
+      # Install Google Chrome and ChromeDriver
+      - name: Install Google Chrome
+        run: |
+          sudo mkdir -p /etc/apt/sources.list.d
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install google-chrome-stable -y
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@master
+
+      - name: Start ChromeDriver
+        run: |
+          export DISPLAY=:99
+          chromedriver --version
+          google-chrome --version
+          sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+
+      - name: Debug Chrome Setup
+        run: |
+          which google-chrome
+          google-chrome --version
+          which chromedriver
+          chromedriver --version
+
+      # Run UI Testing project
+      - name: Run UI Tests
+        working-directory: UI_Testing
+        run: |
+          mvn clean install
+          mvn test
+
+  api_testing:
+    name: API Testing
+    runs-on: ubuntu-latest
+    needs: ui_testing # Ensures UI tests run first (optional; remove if not required)
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Java environment (JDK 21)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21' # Adjust based on your project requirements
+          distribution: 'temurin'
+
+      # Run API Testing project
+      - name: Run API Tests
+        working-directory: API_Testing
+        run: |
+          mvn clean install
+          mvn test
