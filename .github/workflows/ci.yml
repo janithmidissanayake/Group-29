@@ -18,12 +18,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Java environment
+      # Set up Java environment (JDK 21)
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17' # Adjust based on your project requirements
+          java-version: '21' # Adjust based on your project requirements
           distribution: 'temurin'
+
+      # Install Google Chrome and ChromeDriver
+      - name: Install Google Chrome and ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          # Install ChromeDriver (ensure compatibility with Chrome version)
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | sed 's/\./_/g')
+          wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
 
       # Run UI Testing project
       - name: Run UI Tests
@@ -42,11 +54,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Java environment
+      # Set up Java environment (JDK 21)
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17' # Adjust based on your project requirements
+          java-version: '21' # Adjust based on your project requirements
           distribution: 'temurin'
 
       # Run API Testing project
@@ -55,4 +67,3 @@ jobs:
         run: |
           mvn clean install
           mvn test
-
