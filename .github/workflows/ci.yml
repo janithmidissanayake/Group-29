@@ -84,6 +84,6 @@ jobs:
 
       # Run the JAR file for API testing
       - name: Run API Tests JAR
-        working-directory: API_Testing/target
+        working-directory: API_Testing
         run: |
           java -jar demo-0.0.1-SNAPSHOT.jar
