@@ -2,6 +2,7 @@ package com.group_29.ui_testing.pages;
 
 
 import com.group_29.utils.BrowserDriver;
+import com.group_29.utils.ConfigLoader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,10 +18,10 @@ public class LoginPage {
     private final WebDriverWait wait;
 
     // Define locators
-    private final By usernameField = By.xpath("//*[@id=\"loginPanel\"]/form/div[1]/input");
-    private final By passwordField = By.xpath("//*[@id=\"loginPanel\"]/form/div[2]/input");
-    private final By loginButton = By.xpath("//*[@id=\"loginPanel\"]/form/div[3]/input");
-    private final By accountsOverview = By.xpath("//*[@id=\"showOverview\"]/h1");
+    private final By usernameField = By.xpath("//*[@id=\"user-name\"]");
+    private final By passwordField = By.xpath("//*[@id=\"password\"]");
+    private final By loginButton = By.xpath("//*[@id=\"login-button\"]");
+    private final By accountsOverview = By.xpath("//*[@id=\"header_container\"]/div[2]/span");
 
     // Constructor
     public LoginPage(WebDriver driver) {
@@ -60,10 +61,10 @@ public class LoginPage {
     }
 
     // Method to perform a complete login flow
-    public void login(String url, String username, String password) {
-        openLoginPage(url);
-        enterUsername(username);
-        enterPassword(password);
+    public void login() {
+        openLoginPage(ConfigLoader.getProperty("base_url"));
+        enterUsername(ConfigLoader.getProperty("username"));
+        enterPassword(ConfigLoader.getProperty("password"));
         clickLoginButton();
         verifyLoginSuccess();
     }
