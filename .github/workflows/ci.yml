@@ -31,10 +31,10 @@ jobs:
     
     - name: Prepare Test Results Directories
       run: |
-        mkdir -p API_Testing/target/test-results
-        mkdir -p UI_Testing/target/test-results
-        chmod -R 777 API_Testing/target
-        chmod -R 777 UI_Testing/target
+        mkdir -p API_Testing/allure-results
+        mkdir -p UI_Testing/allure-results
+        chmod -R 777 API_Testing/allure-results
+        chmod -R 777 UI_Testing/allure-results
     
     - name: Install Chrome Browser
       run: |
@@ -55,13 +55,6 @@ jobs:
         google-chrome --version
         sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
         
-    - name: Verify Chrome Installation
-      run: |
-        which google-chrome
-        google-chrome --version
-        which chromedriver
-        chromedriver --version
-    
     - name: Launch API Application
       working-directory: API_Testing
       run: |
@@ -81,33 +74,7 @@ jobs:
     - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
-        echo "Starting API tests..."
-        # Clean and compile
-        mvn clean compile
-        
-        # Create testng.xml if it doesn't exist
-        mkdir -p src/test/resources
-        cat << EOF > src/test/resources/testing.xml
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-        <suite name="API Test Suite">
-            <test name="API Tests">
-                <classes>
-                    <class name="com.group_29.api_testing.runner.CucumberRunnerTests"/>
-                </classes>
-            </test>
-        </suite>
-        EOF
-        
-        # Run tests with specific configuration
-        mvn test \
-          -Dtest=com.group_29.api_testing.runner.CucumberRunnerTests \
-          -DfailIfNoTests=true \
-          -Dsurefire.testng.debug=true \
-          -Dcucumber.glue=com.group_29.api_testing.stepDefinitions \
-          -Dcucumber.features=src/test/resources/features \
-          -X
-        
+        mvn test
         echo "API Testing completed"
       continue-on-error: true
     
@@ -117,25 +84,38 @@ jobs:
         mvn test
         echo "UI Testing completed"
       continue-on-error: true
-    
-    - name: Compile Test Results
+
+    # Combine Allure Results
+    - name: Combine Allure Results
       if: always()
       run: |
-        mkdir -p combined-test-results
-        cp -r API_Testing/target/test-results/* combined-test-results/ || true
-        cp -r UI_Testing/target/test-results/* combined-test-results/ || true
-        echo "Combined Test Results:"
-        ls -R combined-test-results/
-    
-    - name: Deploy Test Report
+        mkdir -p allure-results
+        cp -r API_Testing/allure-results/* allure-results/ || true
+        cp -r UI_Testing/allure-results/* allure-results/ || true
+        echo "Combined Allure Results:"
+        ls -R allure-results/
+        echo "Total number of result files:"
+        find allure-results -type f | wc -l
+
+    # Generate Allure Report
+    - name: Generate Allure Report
+      uses: simple-elf/allure-report-action@master
+      if: always()
+      with:
+        allure_results: allure-results
+        allure_report: allure-report
+        allure_history: allure-history
+
+    # Deploy Allure Report
+    - name: Deploy Allure Report
       if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./combined-test-results
+        publish_dir: ./allure-report
         publish_branch: gh-pages
         force_orphan: true
-    
+
     - name: Perform Cleanup
       if: always()
       run: |
@@ -144,7 +124,7 @@ jobs:
           kill $(cat API_Testing/app.pid)
           rm API_Testing/app.pid
         fi
-        echo "Cleaning up test directories..."
-        rm -rf API_Testing/target/test-results || true
-        rm -rf UI_Testing/target/test-results || true
-        rm -rf combined-test-results || true
+        rm -rf API_Testing/allure-results || true
+        rm -rf UI_Testing/allure-results || true
+        rm -rf allure-results || true
+        rm -rf allure-report || true
