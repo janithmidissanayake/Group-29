@@ -28,13 +28,20 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+
+    - name: Build API Test Classes
+      working-directory: API_Testing
+      run: |
+        echo "Building test classes..."
+        mvn compiler:testCompile
+        echo "Test compilation completed"
     
     - name: Prepare Test Results Directories
       run: |
-        mkdir -p API_Testing/allure-results
-        mkdir -p UI_Testing/allure-results
-        chmod -R 777 API_Testing
-        chmod -R 777 UI_Testing
+        mkdir -p API_Testing/target/test-results
+        mkdir -p UI_Testing/target/test-results
+        chmod -R 777 API_Testing/target
+        chmod -R 777 UI_Testing/target
     
     - name: Install Chrome Browser
       run: |
@@ -70,94 +77,45 @@ jobs:
         timeout 60 bash -c 'while ! nc -z localhost 7081; do sleep 1; done'
         echo "API Application is now running"
         sleep 15
-
-    - name: Fix SLF4J Warning
+    
+    - name: Debug Test Environment
       working-directory: API_Testing
       run: |
-        echo "Adding SLF4J binding..."
-        mvn dependency:copy -Dartifact=org.slf4j:slf4j-simple:1.7.36 -DoutputDirectory=target/dependency
-        export CLASSPATH=$CLASSPATH:target/dependency/slf4j-simple-1.7.36.jar
+        echo "Checking Maven test environment..."
+        ls -la
+        echo "Content of target directory:"
+        ls -R target/ || echo "No target directory found"
+        echo "Content of pom.xml:"
+        cat pom.xml
+        echo "Maven dependencies:"
+        mvn dependency:tree
     
     - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
         echo "Starting API tests..."
-        # Clean and compile
-        mvn clean compile
-        
-        # Create testng.xml if it doesn't exist
-        mkdir -p src/test/resources
-        cat << EOF > src/test/resources/testing.xml
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-        <suite name="API Test Suite">
-            <test name="API Tests">
-                <classes>
-                    <class name="com.group_29.api_testing.runner.CucumberRunnerTests"/>
-                </classes>
-            </test>
-        </suite>
-        EOF
-        
-        # Run tests with specific configuration
-        mvn test \
-          -Dtest=com.group_29.api_testing.runner.CucumberRunnerTests \
-          -DfailIfNoTests=true \
-          -Dsurefire.testng.debug=true \
-          -Dcucumber.glue=com.group_29.api_testing.stepDefinitions \
-          -Dcucumber.features=src/test/resources/features \
-          -X
-                mvn clean test -Dallure.results.directory=target/allure-results
-
+        # First ensure test classes are compiled
+        mvn test-compile
+        # Then run tests with detailed output
+        mvn surefire:test -Dtest="*Test" -X
         echo "API Testing completed"
       continue-on-error: true
     
     - name: Execute UI Test Suite
       working-directory: UI_Testing
       run: |
-         mvn clean test -Dallure.results.directory=target/allure-results
-         echo "UI Testing completed"
+        mvn test
+        echo "UI Testing completed"
       continue-on-error: true
     
     - name: Compile Test Results
       if: always()
       run: |
         mkdir -p combined-test-results
-        cp -r API_Testing/allure-results/* combined-test-results/ || true
-        cp -r UI_Testing/allure-results/* combined-test-results/ || true
+        cp -r API_Testing/target/test-results/* combined-test-results/ || true
+        cp -r UI_Testing/target/test-results/* combined-test-results/ || true
         echo "Combined Test Results:"
         ls -R combined-test-results/
-    
-    # Combine Allure Results
-    - name: Combine Allure Results
-      if: always()
-      run: |
-        mkdir -p allure-results
-        cp -r API_Testing/allure-results/* allure-results/ || true
-        cp -r UI_Testing/allure-results/* allure-results/ || true
-        echo "Combined Results Content:"
-        ls -R allure-results/
-        echo "Total number of result files:"
-        find allure-results -type f | wc -l
-
-    # Generate Allure Report
-    - name: Generate Allure Report
-      if: always()
-      uses: simple-elf/allure-report-action@master
-      with:
-        allure_results: allure-results
-        allure_report: allure-report
-        allure_history: allure-history
-
-    # Deploy Allure Report
-    - name: Deploy Allure Report
-      if: always()
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./allure-report
-        publish_branch: gh-pages
-        force_orphan: true
     
     - name: Deploy Test Report
       if: always()
@@ -180,5 +138,3 @@ jobs:
         rm -rf API_Testing/target/test-results || true
         rm -rf UI_Testing/target/test-results || true
         rm -rf combined-test-results || true
-        rm -rf allure-results || true
-        rm -rf allure-report || true
