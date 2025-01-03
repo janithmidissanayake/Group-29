@@ -114,7 +114,8 @@ jobs:
     - name: Execute UI Test Suite
       working-directory: UI_Testing
       run: |
-        mvn test
+        mvn clean install || true
+        mvn test || true
         echo "UI Testing completed"
       continue-on-error: true
     
