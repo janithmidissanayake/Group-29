@@ -2,10 +2,10 @@ name: Automated Testing Workflow
 on:
   push:
     branches: 
-      - test-all
+      - master
   pull_request:
     branches: 
-      - test-all
+      - master
   workflow_dispatch:  
 
 permissions:
