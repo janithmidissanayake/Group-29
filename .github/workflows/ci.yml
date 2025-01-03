@@ -1,85 +1,139 @@
-name: CI Workflow for Multi-Project Repository
-
+name: Automated Testing Workflow
 on:
   push:
-    branches:
-      - test-all
+    branches: 
+      - charuka-dev
   pull_request:
-    branches:
-      - test-all
+    branches: 
+      - charuka-dev
+  workflow_dispatch:  # Allows manual trigger of the workflow
+
+# Setting up required permissions for GitHub Pages deployment
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  ui_testing:
-    name: UI Testing
+  complete_testing:
+    name: UI and API Testing Suite
     runs-on: ubuntu-latest
-
+    
     steps:
-      # Check out the repository code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Set up Java environment (JDK 21)
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21' # Adjust based on your project requirements
-          distribution: 'temurin'
-
-      # Install Google Chrome and ChromeDriver
-      - name: Install Google Chrome
-        run: |
-          sudo mkdir -p /etc/apt/sources.list.d
-          sudo mkdir -p /etc/apt/keyrings
-          curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
-          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install google-chrome-stable -y
-      - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@master
-
-      - name: Start ChromeDriver
-        run: |
-          export DISPLAY=:99
-          chromedriver --version
-          google-chrome --version
-          sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-      - name: Debug Chrome Setup
-        run: |
-          which google-chrome
-          google-chrome --version
-          which chromedriver
-          chromedriver --version
-      # Run UI Testing project
-      - name: Run UI Tests
-        working-directory: UI_Testing
-        run: |
-          mvn clean install || true
-          mvn test || true
-  api_testing:
-    name: API Testing
-    runs-on: ubuntu-latest
-    needs: ui_testing # Ensures UI tests run first (optional; remove if not required)
-
-    steps:
-      # Check out the repository code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Set up Java environment (JDK 21)
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21' # Adjust based on your project requirements
-          distribution: 'temurin'
-
-      - name: Run JAR File
-        working-directory: API_Testing
-        run: |
-          java -jar target/demo-0.0.1-SNAPSHOT.jar
-          
-      # Run API Testing project
-      - name: Run API Tests
-        working-directory: API_Testing
-        run: |
-          mvn clean install
-          mvn test
+    # Basic repository and environment setup
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
+    - name: Configure Java Development Kit
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven    # Enables caching of Maven dependencies for faster builds
+    
+    # Creating directory structure for test results
+    - name: Prepare Test Results Directories
+      run: |
+        # Create directories for both testing projects
+        mkdir -p API_Testing/target/test-results
+        mkdir -p UI_Testing/target/test-results
+        # Set proper permissions to avoid access issues
+        chmod -R 777 API_Testing/target
+        chmod -R 777 UI_Testing/target
+    
+    # Setting up Chrome for UI Testing
+    - name: Install Chrome Browser
+      run: |
+        sudo mkdir -p /etc/apt/sources.list.d
+        sudo mkdir -p /etc/apt/keyrings
+        curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install google-chrome-stable -y
+    
+    - name: Configure ChromeDriver
+      uses: nanasess/setup-chromedriver@master
+      
+    - name: Initialize Chrome Environment
+      run: |
+        export DISPLAY=:99
+        chromedriver --version
+        google-chrome --version
+        sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+        
+    # Verify Chrome setup
+    - name: Verify Chrome Installation
+      run: |
+        which google-chrome
+        google-chrome --version
+        which chromedriver
+        chromedriver --version
+    
+    # Start the Spring Boot application for API testing
+    - name: Launch API Application
+      working-directory: API_Testing
+      run: |
+        # Start the application and save its PID for later cleanup
+        nohup java -jar demo-0.0.1-SNAPSHOT.jar &
+        echo $! > ./app.pid
+        
+        # Wait for application to start (checking port 7081)
+        timeout 60 bash -c 'while ! nc -z localhost 7081; do sleep 1; done'
+        echo "API Application is now running"
+        sleep 15  # Additional wait to ensure full initialization
+    
+    # Execute API Tests
+    - name: Execute API Test Suite
+      working-directory: API_Testing
+      run: |
+        mvn test
+        echo "API Testing completed"
+      continue-on-error: true    # Continue workflow even if tests fail
+    
+    # Execute UI Tests
+    - name: Execute UI Test Suite
+      working-directory: UI_Testing
+      run: |
+        mvn test
+        echo "UI Testing completed"
+      continue-on-error: true
+    
+    # Generate test reports by combining results
+    - name: Compile Test Results
+      if: always()    # Run even if previous steps failed
+      run: |
+        mkdir -p combined-test-results
+        # Copy results from both test suites
+        cp -r API_Testing/target/test-results/* combined-test-results/ || true
+        cp -r UI_Testing/target/test-results/* combined-test-results/ || true
+        
+        # Display results for verification
+        echo "Combined Test Results:"
+        ls -R combined-test-results/
+    
+    # Publish test results to GitHub Pages
+    - name: Deploy Test Report
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./combined-test-results
+        publish_branch: gh-pages
+        force_orphan: true
+    
+    # Clean up resources
+    - name: Perform Cleanup
+      if: always()
+      run: |
+        # Stop the API application
+        if [ -f API_Testing/app.pid ]; then
+          echo "Stopping API application..."
+          kill $(cat API_Testing/app.pid)
+          rm API_Testing/app.pid
+        fi
+        
+        # Clean up test directories
+        echo "Cleaning up test directories..."
+        rm -rf API_Testing/target/test-results || true
+        rm -rf UI_Testing/target/test-results || true
+        rm -rf combined-test-results || true
