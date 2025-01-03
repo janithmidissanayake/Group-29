@@ -2,10 +2,10 @@ name: Automated Testing Workflow
 on:
   push:
     branches: 
-      - charuka-dev
+      - test-all
   pull_request:
     branches: 
-      - charuka-dev
+      - test-all
   workflow_dispatch:  # Allows manual trigger of the workflow
 
 # Setting up required permissions for GitHub Pages deployment
