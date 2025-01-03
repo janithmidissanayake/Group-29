@@ -10,16 +10,18 @@ public class WebDriverManager {
     public static WebDriver getDriver() {
         if (driver.get() == null) {
             // Set up Chrome options
-            driver.set(new ChromeDriver());
-            driver.get().manage().window().maximize();
-
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");  // Ensure Chrome runs headlessly
             options.addArguments("--no-sandbox");  // Disable sandboxing (required in CI environments)
             options.addArguments("--disable-dev-shm-usage");  // Solve issues related to limited /dev/shm size
-            options.addArguments("--remote-debugging-port=9222");  // Specify a port for remote debugging
             options.addArguments("--disable-gpu");  // Disable GPU acceleration in headless mode
 
+            // Initialize WebDriver with options
+            WebDriver chromeDriver = new ChromeDriver(options);
+            chromeDriver.manage().window().maximize();
+
+            // Set the driver for the current thread
+            driver.set(chromeDriver);
         }
         return driver.get();
     }
