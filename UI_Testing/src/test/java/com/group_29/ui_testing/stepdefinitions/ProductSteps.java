@@ -36,10 +36,6 @@ public class ProductSteps {
     public void i_add_the_first_item_to_the_cart() {
         productsPage.addFirstItemToCart();
     }
-//    @When("I add the second item to the cart")
-//    public void i_add_the_second_item_to_the_cart() {
-//        productsPage.addSecondItemToCart();
-//    }
 
     @Then("the cart badge count should be {string}")
     public void the_cart_badge_count_should_be(String expectedCount) {
