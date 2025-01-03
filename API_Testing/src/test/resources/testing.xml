@@ -2,7 +2,7 @@
 <suite name="API Test Suite">
     <test name="Book API Tests">
         <classes>
-            <class name="com.group_29.api_testing.runner.RunCucumberTest"/>
+            <class name="com.group_29.api_testing.runner.CucmberRunnerTests"/>
         </classes>
     </test>
 </suite>

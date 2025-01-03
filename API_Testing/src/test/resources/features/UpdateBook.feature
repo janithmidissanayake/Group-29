@@ -72,7 +72,7 @@ Feature: Update Book API
   User is not permitted.
    """
 
-  Scenario: Validate that numbers are not accepted in title and author fields
+  Scenario: Validate that numbers are not accepted in title and author fields (BUG EXPECTED)
     Given the API base URL is "http://localhost:7081"
     And a book exists with id 2
     When I send a PUT request to "/api/books/2" with the following payload
@@ -84,16 +84,8 @@ Feature: Update Book API
     }
     """
     Then the response status code should be 400
-#    And the response body should contain error message:
-#    """
-#    Title must be a string
-#    """
-#    And the response body should contain error message:
-#    """
-#    Author must be a string
-#    """
 
-Scenario: validate with empty string for author and title field
+Scenario: validate with empty string for author and title field  (BUG  EXPECTED)
   Given the API base URL is "http://localhost:7081"
   And a book exists with id 2
   When I send a PUT request to "/api/books/2" with the following payload
