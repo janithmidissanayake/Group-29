@@ -31,10 +31,10 @@ jobs:
     
     - name: Prepare Test Results Directories
       run: |
-        mkdir -p API_Testing/target/test-results
-        mkdir -p UI_Testing/target/test-results
-        chmod -R 777 API_Testing/target
-        chmod -R 777 UI_Testing/target
+        mkdir -p API_Testing/allure-results
+        mkdir -p UI_Testing/allure-results
+        chmod -R 777 API_Testing
+        chmod -R 777 UI_Testing
     
     - name: Install Chrome Browser
       run: |
@@ -107,14 +107,16 @@ jobs:
           -Dcucumber.glue=com.group_29.api_testing.stepDefinitions \
           -Dcucumber.features=src/test/resources/features \
           -X
-        
+                mvn clean test -Dallure.results.directory=target/allure-results
+
         echo "API Testing completed"
       continue-on-error: true
     
     - name: Execute UI Test Suite
       working-directory: UI_Testing
       run: |
-        mvn test
+                mvn clean test -Dallure.results.directory=target/allure-results
+
         echo "UI Testing completed"
       continue-on-error: true
     
@@ -122,8 +124,8 @@ jobs:
       if: always()
       run: |
         mkdir -p combined-test-results
-        cp -r API_Testing/target/test-results/* combined-test-results/ || true
-        cp -r UI_Testing/target/test-results/* combined-test-results/ || true
+        cp -r API_Testing/allure-results/* combined-test-results/ || true
+        cp -r UI_Testing/allure-results/* combined-test-results/ || true
         echo "Combined Test Results:"
         ls -R combined-test-results/
     
@@ -132,8 +134,8 @@ jobs:
       if: always()
       run: |
         mkdir -p allure-results
-        cp -r API_Testing/target/allure-results/* allure-results/ || true
-        cp -r UI_Testing/target/allure-results/* allure-results/ || true
+        cp -r API_Testing/allure-results/* allure-results/ || true
+        cp -r UI_Testing/allure-results/* allure-results/ || true
         echo "Combined Results Content:"
         ls -R allure-results/
         echo "Total number of result files:"
