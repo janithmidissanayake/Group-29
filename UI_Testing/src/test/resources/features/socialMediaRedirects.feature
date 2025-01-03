@@ -12,5 +12,5 @@ Feature: Social Media Links
     Examples:
       | platform  | url                                           |
       | Twitter   | https://x.com/saucelabs              |
-      | Facebook  | https://www.facebook.com/saucelabs          |
+      | Facebook  | https://web.facebook.com/saucelabs?_rdc=1&_rdr           |
       | LinkedIn  | https://www.linkedin.com/company/sauce-labs |
