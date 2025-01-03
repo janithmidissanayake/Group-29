@@ -8,5 +8,6 @@ import io.cucumber.testng.CucumberOptions;
         glue = {"com.group_29.ui_testing.stepdefinitions"},
         tags = "@smoke"
 )
+
 public class TestRunner extends AbstractTestNGCucumberTests{
         }

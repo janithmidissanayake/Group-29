@@ -42,5 +42,5 @@ public class ProductSteps {
     @Then("the page title should be {string}")
     public void the_page_title_should_be(String expectedTitle) {
         Assert.assertEquals(productsPage.getPageTitle(), expectedTitle);
-}
+    }
 }
