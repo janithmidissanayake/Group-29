@@ -28,6 +28,13 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+
+    - name: Build API Test Classes
+      working-directory: API_Testing
+      run: |
+        echo "Building test classes..."
+        mvn compiler:testCompile
+        echo "Test compilation completed"
     
     - name: Prepare Test Results Directories
       run: |
@@ -62,7 +69,6 @@ jobs:
         which chromedriver
         chromedriver --version
     
-    # Using your original working application start
     - name: Launch API Application
       working-directory: API_Testing
       run: |
@@ -72,22 +78,26 @@ jobs:
         echo "API Application is now running"
         sleep 15
     
-    # Added debug step to check test environment
     - name: Debug Test Environment
       working-directory: API_Testing
       run: |
         echo "Checking Maven test environment..."
         ls -la
-        echo "Content of src/test directory:"
-        ls -R src/test || echo "No test directory found"
-        echo "Maven test classpath:"
-        mvn -X test -DskipTests | grep "test-classes"
+        echo "Content of target directory:"
+        ls -R target/ || echo "No target directory found"
+        echo "Content of pom.xml:"
+        cat pom.xml
+        echo "Maven dependencies:"
+        mvn dependency:tree
     
     - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
         echo "Starting API tests..."
-        mvn test -X
+        # First ensure test classes are compiled
+        mvn test-compile
+        # Then run tests with detailed output
+        mvn surefire:test -Dtest="*Test" -X
         echo "API Testing completed"
       continue-on-error: true
     
