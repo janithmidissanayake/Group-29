@@ -115,9 +115,8 @@ jobs:
     - name: Execute UI Test Suite
       working-directory: UI_Testing
       run: |
-                mvn clean test -Dallure.results.directory=target/allure-results
-
-        echo "UI Testing completed"
+         mvn clean test -Dallure.results.directory=target/allure-results
+         echo "UI Testing completed"
       continue-on-error: true
     
     - name: Compile Test Results
