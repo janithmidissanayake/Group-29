@@ -1,3 +1,4 @@
+
 Feature: Problem User Checkout
   @smoke
   Scenario: Checkout proceed
