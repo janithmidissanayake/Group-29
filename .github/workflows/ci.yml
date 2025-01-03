@@ -1,5 +1,4 @@
 name: CI Workflow for Multi-Project Repository
-
 on:
   push:
     branches:
@@ -9,37 +8,91 @@ on:
       - charuka-dev
 
 jobs:
-  ui_testing:
-    name: UI Testing
+  combined_testing:
+    name: UI and API Testing
     runs-on: ubuntu-latest
-
     steps:
+      # First, let's check out the code repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Java environment for both test suites
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
 
+      # Setting up Chrome and ChromeDriver for UI Testing
       - name: Install Google Chrome
         run: |
+          sudo mkdir -p /etc/apt/sources.list.d
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
           sudo apt-get install google-chrome-stable -y
+
       - name: Setup ChromeDriver
         uses: nanasess/setup-chromedriver@master
 
+      # Start ChromeDriver with proper display configuration
+      - name: Start ChromeDriver
+        run: |
+          export DISPLAY=:99
+          chromedriver --version
+          google-chrome --version
+          sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+
+      # Verify Chrome setup for debugging purposes
       - name: Debug Chrome Setup
         run: |
+          which google-chrome
           google-chrome --version
+          which chromedriver
           chromedriver --version
 
+      # Run the UI Tests first
       - name: Run UI Tests
         working-directory: UI_Testing
         run: |
           mvn clean install
-          mvn test -Dcucumber.options="--plugin pretty --plugin json:target/cucumber-report.json"
+          mvn test
 
-      - name: Publish Cucumber Report
-        uses: actions/upl
+      # Now start the JAR application for API testing
+      - name: Start Spring Boot Application
+        working-directory: API_Testing
+        run: |
+          # Start the JAR file and run it in the background
+          nohup java -jar demo-0.0.1-SNAPSHOT.jar &
+          # Save the process ID for later cleanup
+          echo $! > ./app.pid
+          # Let's verify the JAR started successfully
+          ps aux | grep demo-0.0.1-SNAPSHOT.jar
+
+      # Wait for the application to be fully ready
+      - name: Wait for Application Startup
+        run: |
+          # Wait up to 60 seconds for the application to start accepting connections
+          timeout 60 bash -c 'while ! nc -z localhost 8080; do sleep 1; done'
+          # Additional wait time to ensure application is fully initialized
+          sleep 15
+          echo "Application is now ready to accept connections"
+
+      # Run the API Tests
+      - name: Run API Tests
+        working-directory: API_Testing
+        run: |
+          mvn test
+
+      # Ensure we clean up the running JAR application
+      - name: Cleanup
+        if: always()  # This ensures cleanup happens even if tests fail
+        working-directory: API_Testing
+        run: |
+          if [ -f ./app.pid ]; then
+            echo "Stopping Spring Boot application..."
+            kill $(cat ./app.pid)
+            rm ./app.pid
+            echo "Application stopped successfully"
+          fi
