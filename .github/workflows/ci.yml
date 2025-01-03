@@ -72,6 +72,11 @@ jobs:
           java-version: '21' # Adjust based on your project requirements
           distribution: 'temurin'
 
+      - name: Run JAR File
+        working-directory: API_Testing
+        run: |
+          java -jar target/demo-0.0.1-SNAPSHOT.jar
+          
       # Run API Testing project
       - name: Run API Tests
         working-directory: API_Testing
