@@ -229,11 +229,11 @@ public class ProductsPage {
         wait.until(ExpectedConditions.elementToBeClickable(addToCartButtonForFirstItem)).click();
     }
 
-    public void addSecondItemToCart() {
-        if (addToCartButtons.size() > 1) {
-            wait.until(ExpectedConditions.elementToBeClickable(addToCartButtons.get(1))).click();
-        }
-    }
+//    public void addSecondItemToCart() {
+//        if (addToCartButtons.size() > 1) {
+//            wait.until(ExpectedConditions.elementToBeClickable(addToCartButtons.get(1))).click();
+//        }
+//    }
 
     public String getCartBadgeCount() {
         try {
