@@ -36,31 +36,30 @@ jobs:
         chmod -R 777 API_Testing/target
         chmod -R 777 UI_Testing/target
     
-    - name: Install Chrome Browser
-      run: |
-        sudo mkdir -p /etc/apt/sources.list.d
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
-        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        sudo apt-get update
-        sudo apt-get install google-chrome-stable -y
-    
-    - name: Configure ChromeDriver
-      uses: nanasess/setup-chromedriver@master
-      
-    - name: Initialize Chrome Environment
-      run: |
-        export DISPLAY=:99
-        chromedriver --version
-        google-chrome --version
-        sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-        
-    - name: Verify Chrome Installation
-      run: |
-        which google-chrome
-        google-chrome --version
-        which chromedriver
-        chromedriver --version
+    # Install Google Chrome and ChromeDriver
+      - name: Install Google Chrome
+        run: |
+          sudo mkdir -p /etc/apt/sources.list.d
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install google-chrome-stable -y
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@master
+
+      - name: Start ChromeDriver
+        run: |
+          export DISPLAY=:99
+          chromedriver --version
+          google-chrome --version
+          sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+      - name: Debug Chrome Setup
+        run: |
+          which google-chrome
+          google-chrome --version
+          which chromedriver
+          chromedriver --version
     
     - name: Launch API Application
       working-directory: API_Testing
