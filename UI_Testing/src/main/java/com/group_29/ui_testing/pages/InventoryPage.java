@@ -172,7 +172,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductsPage {
+public class InventoryPage {
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -215,7 +215,7 @@ public class ProductsPage {
     @FindBy(css = ".inventory_item:nth-child(1) .btn_secondary")
     private WebElement removeFromCartButtonForFirstItem;
 
-    public ProductsPage(WebDriver driver) {
+    public InventoryPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);

@@ -15,9 +15,7 @@ public class CheckoutStepTwoPage {
     @FindBy(className = "title")
     private WebElement pageTitle;
 
-
-
-    public CheckoutStepTwoPage(WebDriver driver) {
+   public CheckoutStepTwoPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));

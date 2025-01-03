@@ -2,19 +2,19 @@ package com.group_29.ui_testing.stepdefinitions;
 
 import com.group_29.ui_testing.base.WebDriverManager;
 import com.group_29.ui_testing.pages.AddToCartPage;
-import com.group_29.ui_testing.pages.ProductsPage;
+import com.group_29.ui_testing.pages.InventoryPage;
 import io.cucumber.java.en.*;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
 public class AddToCartSteps {
     private WebDriver driver;
-    private ProductsPage productsPage;
+    private InventoryPage productsPage;
     private AddToCartPage addToCartPage;
 
     public AddToCartSteps() {
         driver = WebDriverManager.getDriver();
-        productsPage = new ProductsPage(driver);
+        productsPage = new InventoryPage(driver);
         addToCartPage = new AddToCartPage(driver);
     }
 

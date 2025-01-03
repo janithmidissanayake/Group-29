@@ -11,7 +11,6 @@ Feature: Navigation functionality
     When I click on the cart link
     Then I should be on the cart page
 
-
   @smoke
   Scenario: Verify logout functionality
     When I click on the menu button
