@@ -6,6 +6,7 @@ import io.cucumber.testng.CucumberOptions;
 @CucumberOptions(
         features = "src/test/resources/features",
         glue = {"com.group_29.ui_testing.stepdefinitions"},
+        plugin = {"io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"},
         tags = "@smoke"
 )
 

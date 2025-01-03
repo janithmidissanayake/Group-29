@@ -8,11 +8,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class AddToCartPage {
-    private WebDriver driver;
+    private static WebDriver driver;
     private WebDriverWait wait;
 
     @FindBy(className = "title")
     private WebElement addToCartPageTitle;
+
 
     public AddToCartPage(WebDriver driver) {
         this.driver = driver;
@@ -38,5 +39,10 @@ public class AddToCartPage {
         String buttonXPath = "//div[text()='" + productName + "']/ancestor::div[@class='cart_item']//button[text()='Remove']";
         WebElement removeButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(buttonXPath)));
         removeButton.click();
+    }
+
+    public void proceedCheckout() {
+        WebElement checkoutButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("checkout")));
+        checkoutButton.click();
     }
 }
