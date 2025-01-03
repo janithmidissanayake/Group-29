@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="API_Testing" />
         <module name="UI_Testing" />
+        <module name="selenium-cucumber-project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
