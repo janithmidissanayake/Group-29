@@ -71,7 +71,7 @@ jobs:
         mvn dependency:copy -Dartifact=org.slf4j:slf4j-simple:1.7.36 -DoutputDirectory=target/dependency
         export CLASSPATH=$CLASSPATH:target/dependency/slf4j-simple-1.7.36.jar
     
-     - name: Execute API Test Suite
+    - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
         echo "Starting API tests..."
