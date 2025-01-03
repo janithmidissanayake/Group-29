@@ -20,7 +20,7 @@ public class ApiUtils {
                 .basic(username, password)
                 .when()
                 .delete(endpoint);
-
+    }
     public static RequestSpecification sendPutRequest(String endpoint, String username, String password,String payload) {
         return RestAssured.given()
                 .auth()
