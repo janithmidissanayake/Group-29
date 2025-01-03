@@ -83,36 +83,19 @@ public class PostBooksTest {
 
         String requestBody = """
             {
-              "title": null,
-              "author": null
+              "title": "",
+              "author": ""
             }
         """;
         response= ApiUtils.sendPostRequest(apiPath,ConfigLoader.getProperty("valid_admin_username") , ConfigLoader.getProperty("valid_admin_password"),requestBody);}
 
 
-    @Then("the response should contain the message {string}")
-public void theResponseShouldContainTheMessage(String expectedMessage) {
-
-    String actualMessage = response.asString();
-
-    Assert.assertEquals(actualMessage, expectedMessage, "The error message does not match.");
-}
-    @Then("the response should contain an error message {string}")
-    public void theResponseShouldContainAnErrorMessage(String errorMessage) {
-
-        // Validate that the response contains the expected error message
-        Assert.assertTrue(response.body().asString().contains(errorMessage),
-                "Expected error message not found in response: " + errorMessage);
-    }
     @Then("I should receive a response with status code {int}")
     public void iShouldReceiveAResponseWithStatusCode(int statusCode) {
         response.then().statusCode(statusCode); // Validate status code
     }
 
-    @Then("the response should contain the book's id")
-    public void theResponseShouldContainTheBooksId() {
-        Assert.assertNotNull(response.jsonPath().get("id"), "The book ID should be present in the response");
-    }
+
 
 
 }
