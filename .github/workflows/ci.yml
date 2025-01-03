@@ -28,6 +28,13 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+
+    - name: Build API Test Classes
+      working-directory: API_Testing
+      run: |
+        echo "Building test classes..."
+        mvn compiler:testCompile
+        echo "Test compilation completed"
     
     - name: Prepare Test Results Directories
       run: |
@@ -70,44 +77,27 @@ jobs:
         timeout 60 bash -c 'while ! nc -z localhost 7081; do sleep 1; done'
         echo "API Application is now running"
         sleep 15
-
-    - name: Fix SLF4J Warning
+    
+    - name: Debug Test Environment
       working-directory: API_Testing
       run: |
-        echo "Adding SLF4J binding..."
-        mvn dependency:copy -Dartifact=org.slf4j:slf4j-simple:1.7.36 -DoutputDirectory=target/dependency
-        export CLASSPATH=$CLASSPATH:target/dependency/slf4j-simple-1.7.36.jar
+        echo "Checking Maven test environment..."
+        ls -la
+        echo "Content of target directory:"
+        ls -R target/ || echo "No target directory found"
+        echo "Content of pom.xml:"
+        cat pom.xml
+        echo "Maven dependencies:"
+        mvn dependency:tree
     
     - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
         echo "Starting API tests..."
-        # Clean and compile
-        mvn clean compile
-        
-        # Create testng.xml if it doesn't exist
-        mkdir -p src/test/resources
-        cat << EOF > src/test/resources/testing.xml
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-        <suite name="API Test Suite">
-            <test name="API Tests">
-                <classes>
-                    <class name="com.group_29.api_testing.runner.CucumberRunnerTests"/>
-                </classes>
-            </test>
-        </suite>
-        EOF
-        
-        # Run tests with specific configuration
-        mvn test \
-          -Dtest=com.group_29.api_testing.runner.CucumberRunnerTests \
-          -DfailIfNoTests=true \
-          -Dsurefire.testng.debug=true \
-          -Dcucumber.glue=com.group_29.api_testing.stepDefinitions \
-          -Dcucumber.features=src/test/resources/features \
-          -X
-        
+        # First ensure test classes are compiled
+        mvn test-compile
+        # Then run tests with detailed output
+        mvn surefire:test -Dtest="*Test" -X
         echo "API Testing completed"
       continue-on-error: true
     
