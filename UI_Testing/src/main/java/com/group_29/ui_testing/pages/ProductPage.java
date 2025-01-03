@@ -23,34 +23,34 @@ public class ProductPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-//    public void addProductToCart() {
-//        try {
-//            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
-//            button.click();
-//        } catch (TimeoutException e) {
-//            throw new IllegalStateException("Add to Cart button is not clickable within the timeout period.", e);
-//        }
-//    }
-//
-//    public void removeProduct() {
-//        try {
-//            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(removeButton));
-//            button.click();
-//        } catch (TimeoutException e) {
-//            throw new IllegalStateException("Remove button is not clickable within the timeout period.", e);
-//        }
-//    }
-//
-//    public int getCartCount() {
-//        try {
-//            WebElement badge = driver.findElement(cartBadge);
-//            Integer.parseInt(badge.getText());
-//            return Integer.parseInt(badge.getText());
-//
-//        } catch (NoSuchElementException e) {
-//            return 0;
-//        }
-//    }
+    public void addProductToCart() {
+        try {
+            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(addToCartButton));
+            button.click();
+        } catch (TimeoutException e) {
+            throw new IllegalStateException("Add to Cart button is not clickable within the timeout period.", e);
+        }
+    }
+
+    public void removeProduct() {
+        try {
+            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(removeButton));
+            button.click();
+        } catch (TimeoutException e) {
+            throw new IllegalStateException("Remove button is not clickable within the timeout period.", e);
+        }
+    }
+
+    public int getCartCount() {
+        try {
+            WebElement badge = driver.findElement(cartBadge);
+            Integer.parseInt(badge.getText());
+            return Integer.parseInt(badge.getText());
+
+        } catch (NoSuchElementException e) {
+            return 0;
+        }
+    }
 
     public List<String> getAllProductImageSources() {
         List<WebElement> images = driver.findElements(productImages);
