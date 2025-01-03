@@ -1,12 +1,12 @@
 name: Automated Testing Workflow
 on:
   push:
-    branches: 
+    branches:
       - test-all
   pull_request:
-    branches: 
+    branches:
       - test-all
-  workflow_dispatch:  
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,51 +17,57 @@ jobs:
   complete_testing:
     name: UI and API Testing Suite
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
-    
+
     - name: Configure Java Development Kit
       uses: actions/setup-java@v3
       with:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    
+
     - name: Prepare Test Results Directories
       run: |
         mkdir -p API_Testing/target/test-results
         mkdir -p UI_Testing/target/test-results
         chmod -R 777 API_Testing/target
         chmod -R 777 UI_Testing/target
-    
+
     - name: Install Chrome Browser
       run: |
-        sudo mkdir -p /etc/apt/sources.list.d
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
-        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
         sudo apt-get update
-        sudo apt-get install google-chrome-stable -y
-    
-    - name: Configure ChromeDriver
-      uses: nanasess/setup-chromedriver@master
-      
-    - name: Initialize Chrome Environment
+        sudo apt-get install -y wget gnupg
+        wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /usr/share/keyrings/google-chrome.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: Install ChromeDriver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
+        DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+        wget -q "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip"
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        rm chromedriver_linux64.zip
+        chromedriver --version
+
+    - name: Configure Chrome Environment
       run: |
         export DISPLAY=:99
-        chromedriver --version
-        google-chrome --version
-        sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-        
+        sudo Xvfb :99 -screen 0 1920x1080x24 -ac &
+        echo "Xvfb started for display"
+
     - name: Verify Chrome Installation
       run: |
         which google-chrome
         google-chrome --version
         which chromedriver
         chromedriver --version
-    
+
     - name: Launch API Application
       working-directory: API_Testing
       run: |
@@ -77,47 +83,23 @@ jobs:
         echo "Adding SLF4J binding..."
         mvn dependency:copy -Dartifact=org.slf4j:slf4j-simple:1.7.36 -DoutputDirectory=target/dependency
         export CLASSPATH=$CLASSPATH:target/dependency/slf4j-simple-1.7.36.jar
-    
+
     - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
         echo "Starting API tests..."
-        # Clean and compile
         mvn clean compile
-        
-        # Create testng.xml if it doesn't exist
-        mkdir -p src/test/resources
-        cat << EOF > src/test/resources/testing.xml
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-        <suite name="API Test Suite">
-            <test name="API Tests">
-                <classes>
-                    <class name="com.group_29.api_testing.runner.CucumberRunnerTests"/>
-                </classes>
-            </test>
-        </suite>
-        EOF
-        
-        # Run tests with specific configuration
-        mvn test \
-          -Dtest=com.group_29.api_testing.runner.CucumberRunnerTests \
-          -DfailIfNoTests=true \
-          -Dsurefire.testng.debug=true \
-          -Dcucumber.glue=com.group_29.api_testing.stepDefinitions \
-          -Dcucumber.features=src/test/resources/features \
-          -X
-        
+        mvn test -Dtest=com.group_29.api_testing.runner.CucumberRunnerTests -X
         echo "API Testing completed"
       continue-on-error: true
-    
+
     - name: Execute UI Test Suite
       working-directory: UI_Testing
       run: |
         mvn test
         echo "UI Testing completed"
       continue-on-error: true
-    
+
     - name: Compile Test Results
       if: always()
       run: |
@@ -126,7 +108,7 @@ jobs:
         cp -r UI_Testing/target/test-results/* combined-test-results/ || true
         echo "Combined Test Results:"
         ls -R combined-test-results/
-    
+
     - name: Deploy Test Report
       if: always()
       uses: peaceiris/actions-gh-pages@v3
@@ -135,7 +117,7 @@ jobs:
         publish_dir: ./combined-test-results
         publish_branch: gh-pages
         force_orphan: true
-    
+
     - name: Perform Cleanup
       if: always()
       run: |
