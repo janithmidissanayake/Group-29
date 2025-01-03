@@ -5,12 +5,11 @@ import com.group_29.ui_testing.base.WebDriverManager;
 import com.group_29.ui_testing.pages.AddToCartPage;
 import com.group_29.ui_testing.pages.CheckoutStepOnePage;
 import com.group_29.ui_testing.pages.CheckoutStepTwoPage;
-import com.group_29.ui_testing.pages.ProductsPage;
+import com.group_29.ui_testing.pages.InventoryPage;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
@@ -21,22 +20,18 @@ public class CheckoutSteps {
     private AddToCartPage addToCartPage;
 
 
-    private final ProductsPage productsPage;
+    private final InventoryPage productsPage;
 
     public CheckoutSteps() {
         driver = WebDriverManager.getDriver(); // Get driver instance
-        productsPage = new ProductsPage(driver);
+        productsPage = new InventoryPage(driver);
         addToCartPage = new AddToCartPage(driver);
         checkoutStepTwoPage = new CheckoutStepTwoPage(driver);
         checkoutStepOnePage = new CheckoutStepOnePage(driver);
     }
-    //    public CheckoutSteps(WebDriver driver) {
-//        this.driver = driver;
-//        this.productsPage = new ProductsPage(driver);
-//    }
+
     @Given("I am logged in as problem_user for checkout")
     public void i_am_on_the_products_page() {
-        // Login is handled in Hooks, no additional verification needed
     }
     @And("I have items in the cart and navigate to the cart page")
     public void checkItemsInCart() {
