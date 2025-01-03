@@ -1,0 +1,53 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","914","Verify cart navigation","","Fri Jan 03 17:50:00 GMT 2025","passed","Fri Jan 03 17:50:01 GMT 2025","","Navigation functionality","Verify cart navigation",""
+"","230","Fetch books with different credentials","","Fri Jan 03 17:49:51 GMT 2025","passed","Fri Jan 03 17:49:51 GMT 2025","","Get Books","Fetch books with different credentials",""
+"","176",": Update a book as a user","","Fri Jan 03 17:49:52 GMT 2025","passed","Fri Jan 03 17:49:53 GMT 2025","","Update Book API",": Update a book as a user",""
+"  As a user
+  I want to be able to remove products from the cart
+  And verify removal functionality works correctly","1035","Verify product removal functionality (BUG EXPECTED)","","Fri Jan 03 17:50:02 GMT 2025","failed","Fri Jan 03 17:50:03 GMT 2025","","Product Removal","Verify product removal functionality (BUG EXPECTED)",""
+"  As a logged-in user
+  I want to verify the products page","828","Verify products page title","","Fri Jan 03 17:50:20 GMT 2025","passed","Fri Jan 03 17:50:20 GMT 2025","","Products Page Functionality","Verify products page title",""
+"  As a logged-in user
+  I want to verify the products page","906","Add a single item to the cart","","Fri Jan 03 17:50:20 GMT 2025","passed","Fri Jan 03 17:50:21 GMT 2025","","Products Page Functionality","Add a single item to the cart",""
+"","1752","User attempts to delete a book with a valid ID","","Fri Jan 03 17:49:48 GMT 2025","failed","Fri Jan 03 17:49:50 GMT 2025","","Delete a book from the system","User attempts to delete a book with a valid ID",""
+"","216","Admin adds a new book successfully","","Fri Jan 03 17:49:51 GMT 2025","passed","Fri Jan 03 17:49:51 GMT 2025","","Add new book to the system","Admin adds a new book successfully",""
+"","187","update a book with invalid payload","","Fri Jan 03 17:49:52 GMT 2025","passed","Fri Jan 03 17:49:52 GMT 2025","","Update Book API","update a book with invalid payload",""
+"  As a user
+  I want to check social media links
+  So that I can follow the company on different platforms","2141","Verify social media links","","Fri Jan 03 17:50:26 GMT 2025","passed","Fri Jan 03 17:50:28 GMT 2025","","Social Media Links","Verify social media links",""
+"","176","validate with empty string for author and title field  (BUG  EXPECTED)","","Fri Jan 03 17:49:53 GMT 2025","failed","Fri Jan 03 17:49:53 GMT 2025","","Update Book API","validate with empty string for author and title field  (BUG  EXPECTED)",""
+"","95","Fetch a book with an invalid ID format","","Fri Jan 03 17:49:50 GMT 2025","passed","Fri Jan 03 17:49:51 GMT 2025","","Get Book By Id","Fetch a book with an invalid ID format",""
+"","525","Successfully update a book","","Fri Jan 03 17:49:52 GMT 2025","passed","Fri Jan 03 17:49:52 GMT 2025","","Update Book API","Successfully update a book",""
+"","91","Fetch a book by ID with valid user credentials (BUG EXPECTED)","","Fri Jan 03 17:49:50 GMT 2025","failed","Fri Jan 03 17:49:50 GMT 2025","","Get Book By Id","Fetch a book by ID with valid user credentials (BUG EXPECTED)",""
+"","95","User tries to add a new book","","Fri Jan 03 17:49:51 GMT 2025","passed","Fri Jan 03 17:49:51 GMT 2025","","Add new book to the system","User tries to add a new book",""
+"","2454","Verify menu button functionality","","Fri Jan 03 17:49:57 GMT 2025","passed","Fri Jan 03 17:50:00 GMT 2025","","Navigation functionality","Verify menu button functionality",""
+"","96","Fetch books with different credentials","","Fri Jan 03 17:49:51 GMT 2025","passed","Fri Jan 03 17:49:51 GMT 2025","","Get Books","Fetch books with different credentials",""
+"  As a logged-in user
+  I want to add a product to the cart
+  I want to verify product adding to a cart","1129","Add a product to the cart","","Fri Jan 03 17:50:06 GMT 2025","passed","Fri Jan 03 17:50:07 GMT 2025","","Add to Cart","Add a product to the cart",""
+"","103","Admin adds a book with unexpected attributes in the payload(BUG EXPECTED)","","Fri Jan 03 17:49:51 GMT 2025","failed","Fri Jan 03 17:49:51 GMT 2025","","Add new book to the system","Admin adds a book with unexpected attributes in the payload(BUG EXPECTED)",""
+"  As a user
+  I want to check social media links
+  So that I can follow the company on different platforms","2327","Verify social media links","","Fri Jan 03 17:50:24 GMT 2025","failed","Fri Jan 03 17:50:26 GMT 2025","","Social Media Links","Verify social media links",""
+"","94","Admin attempts to delete a non-existing book","","Fri Jan 03 17:49:50 GMT 2025","failed","Fri Jan 03 17:49:50 GMT 2025","","Delete a book from the system","Admin attempts to delete a non-existing book",""
+"","95","Admin attempts to delete a valid book","","Fri Jan 03 17:49:50 GMT 2025","failed","Fri Jan 03 17:49:50 GMT 2025","","Delete a book from the system","Admin attempts to delete a valid book",""
+"","112","Fetch a book by ID with valid admin credentials","","Fri Jan 03 17:49:50 GMT 2025","passed","Fri Jan 03 17:49:50 GMT 2025","","Get Book By Id","Fetch a book by ID with valid admin credentials",""
+"","113","Admin tries to add a book with an integer as the author(BUG EXPECTED)","","Fri Jan 03 17:49:51 GMT 2025","failed","Fri Jan 03 17:49:51 GMT 2025","","Add new book to the system","Admin tries to add a book with an integer as the author(BUG EXPECTED)",""
+"  As a user
+  I want to verify that product images are displaying correctly","989","Verify unique product images are displayed for each product","","Fri Jan 03 17:50:03 GMT 2025","failed","Fri Jan 03 17:50:04 GMT 2025","","Product Images Verification","Verify unique product images are displayed for each product",""
+"  As a user
+  I want to sort products by price
+  But the sorting functionality is not working correctly","1263","Verify price sorting (low to high) not working","","Fri Jan 03 17:50:18 GMT 2025","passed","Fri Jan 03 17:50:20 GMT 2025","","Product Sorting","Verify price sorting (low to high) not working",""
+"","97","Admin sends a POST request with missing values in the payload(BUG EXPECTED)","","Fri Jan 03 17:49:51 GMT 2025","failed","Fri Jan 03 17:49:52 GMT 2025","","Add new book to the system","Admin sends a POST request with missing values in the payload(BUG EXPECTED)",""
+"","1527","Verify logout functionality","","Fri Jan 03 17:50:01 GMT 2025","passed","Fri Jan 03 17:50:02 GMT 2025","","Navigation functionality","Verify logout functionality",""
+"","184","Validate that numbers are not accepted in title and author fields (BUG EXPECTED)","","Fri Jan 03 17:49:53 GMT 2025","failed","Fri Jan 03 17:49:53 GMT 2025","","Update Book API","Validate that numbers are not accepted in title and author fields (BUG EXPECTED)",""
+"","103","User attempts to delete a non-existing book","","Fri Jan 03 17:49:50 GMT 2025","failed","Fri Jan 03 17:49:50 GMT 2025","","Delete a book from the system","User attempts to delete a non-existing book",""
+"","187","Update a book with invalid ID","","Fri Jan 03 17:49:52 GMT 2025","passed","Fri Jan 03 17:49:52 GMT 2025","","Update Book API","Update a book with invalid ID",""
+"  As a logged-in user
+  I want to remove products from my cart
+  So that I can update my purchase items","11529","Remove product from cart page","","Fri Jan 03 17:50:07 GMT 2025","passed","Fri Jan 03 17:50:18 GMT 2025","","Remove from Cart","Remove product from cart page",""
+"  As a user
+  I want to check social media links
+  So that I can follow the company on different platforms","2624","Verify social media links","","Fri Jan 03 17:50:21 GMT 2025","passed","Fri Jan 03 17:50:24 GMT 2025","","Social Media Links","Verify social media links",""
+"","97","Invalid parameter type for ID in DELETE request","","Fri Jan 03 17:49:50 GMT 2025","passed","Fri Jan 03 17:49:50 GMT 2025","","Delete a book from the system","Invalid parameter type for ID in DELETE request",""
+"","1296","Checkout proceed","","Fri Jan 03 17:50:04 GMT 2025","failed","Fri Jan 03 17:50:06 GMT 2025","","Problem User Checkout","Checkout proceed",""
