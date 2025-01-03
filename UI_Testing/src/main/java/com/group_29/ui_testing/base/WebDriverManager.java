@@ -10,6 +10,9 @@ public class WebDriverManager {
     public static WebDriver getDriver() {
         if (driver.get() == null) {
             // Set up Chrome options
+            driver.set(new ChromeDriver());
+            driver.get().manage().window().maximize();
+
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");  // Ensure Chrome runs headlessly
             options.addArguments("--no-sandbox");  // Disable sandboxing (required in CI environments)
@@ -17,9 +20,6 @@ public class WebDriverManager {
             options.addArguments("--remote-debugging-port=9222");  // Specify a port for remote debugging
             options.addArguments("--disable-gpu");  // Disable GPU acceleration in headless mode
 
-            // Create a new ChromeDriver with the specified options
-            driver.set(new ChromeDriver(options));
-            driver.get().manage().window().maximize();  // Maximize the window (useful for debugging)
         }
         return driver.get();
     }
