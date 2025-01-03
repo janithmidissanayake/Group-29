@@ -99,9 +99,7 @@ jobs:
           -Dsurefire.testng.debug=true \
           -Dcucumber.glue=com.group_29.api_testing.stepDefinitions \
           -Dcucumber.features=src/test/resources/features \
-          -X \
-          -Dallure.results.directory=API_Testing/allure-results
-
+          -X
         
         echo "API Testing completed"
       continue-on-error: true
