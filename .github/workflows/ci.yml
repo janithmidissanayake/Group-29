@@ -29,20 +29,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Build API Test Classes
-      working-directory: API_Testing
-      run: |
-        echo "Building test classes..."
-        mvn compiler:testCompile
-        echo "Test compilation completed"
-    
-    - name: Prepare Test Results Directories
-      run: |
-        mkdir -p API_Testing/target/test-results
-        mkdir -p UI_Testing/target/test-results
-        chmod -R 777 API_Testing/target
-        chmod -R 777 UI_Testing/target
-    
     - name: Install Chrome Browser
       run: |
         sudo mkdir -p /etc/apt/sources.list.d
@@ -54,75 +40,54 @@ jobs:
     
     - name: Configure ChromeDriver
       uses: nanasess/setup-chromedriver@master
-      
+
     - name: Initialize Chrome Environment
       run: |
         export DISPLAY=:99
-        chromedriver --version
-        google-chrome --version
         sudo Xvfb -ac :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
         
-    - name: Verify Chrome Installation
-      run: |
-        which google-chrome
-        google-chrome --version
-        which chromedriver
-        chromedriver --version
-    
     - name: Launch API Application
       working-directory: API_Testing
       run: |
-        nohup java -jar demo-0.0.1-SNAPSHOT.jar &
+        nohup java -jar demo-0.0.1-SNAPSHOT.jar & 
         echo $! > ./app.pid
         timeout 60 bash -c 'while ! nc -z localhost 7081; do sleep 1; done'
         echo "API Application is now running"
         sleep 15
     
-    - name: Debug Test Environment
-      working-directory: API_Testing
-      run: |
-        echo "Checking Maven test environment..."
-        ls -la
-        echo "Content of target directory:"
-        ls -R target/ || echo "No target directory found"
-        echo "Content of pom.xml:"
-        cat pom.xml
-        echo "Maven dependencies:"
-        mvn dependency:tree
-    
     - name: Execute API Test Suite
       working-directory: API_Testing
       run: |
-        echo "Starting API tests..."
-        # First ensure test classes are compiled
-        mvn test-compile
-        # Then run tests with detailed output
-        mvn surefire:test -Dtest="*Test" -X
-        echo "API Testing completed"
+        mvn clean test -Dallure.results.directory=allure-results
       continue-on-error: true
     
     - name: Execute UI Test Suite
       working-directory: UI_Testing
       run: |
-        mvn test
-        echo "UI Testing completed"
+        mvn clean test -Dallure.results.directory=allure-results
       continue-on-error: true
     
-    - name: Compile Test Results
+    - name: Combine Allure Results
       if: always()
       run: |
-        mkdir -p combined-test-results
-        cp -r API_Testing/target/test-results/* combined-test-results/ || true
-        cp -r UI_Testing/target/test-results/* combined-test-results/ || true
-        echo "Combined Test Results:"
-        ls -R combined-test-results/
+        mkdir -p combined-allure-results
+        cp -r API_Testing/allure-results/* combined-allure-results/ || true
+        cp -r UI_Testing/allure-results/* combined-allure-results/ || true
+        echo "Combined Allure Results:"
+        ls -R combined-allure-results/
     
-    - name: Deploy Test Report
+    - name: Generate Allure Report
+      if: always()
+      run: |
+        allure generate combined-allure-results --clean -o allure-report
+        echo "Allure Report generated"
+
+    - name: Deploy Allure Report
       if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./combined-test-results
+        publish_dir: ./allure-report
         publish_branch: gh-pages
         force_orphan: true
     
@@ -130,11 +95,10 @@ jobs:
       if: always()
       run: |
         if [ -f API_Testing/app.pid ]; then
-          echo "Stopping API application..."
           kill $(cat API_Testing/app.pid)
           rm API_Testing/app.pid
         fi
-        echo "Cleaning up test directories..."
-        rm -rf API_Testing/target/test-results || true
-        rm -rf UI_Testing/target/test-results || true
-        rm -rf combined-test-results || true
+        rm -rf API_Testing/allure-results || true
+        rm -rf UI_Testing/allure-results || true
+        rm -rf combined-allure-results || true
+        rm -rf allure-report || true
