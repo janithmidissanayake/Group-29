@@ -5,6 +5,6 @@ Feature: Product Images Verification
 
   @smoke
   Scenario: Verify unique product images are displayed for each product
-    Given I am on the inventory page
+    Given I am on the products page
     When I get all product images source URLs
     Then each product should have a unique image

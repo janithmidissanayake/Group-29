@@ -7,7 +7,7 @@ Feature: Product Removal
 
   @smoke
   Scenario: Verify product removal functionality (BUG EXPECTED)
-    Given I am on the inventory page
+    Given I am on the products page
     When I add a product to cart
     Then the cart count should be 1
     When I click remove button for the product
