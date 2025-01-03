@@ -20,7 +20,7 @@ public class ApiUtils {
                 .basic(username, password)
                 .when()
                 .delete(endpoint);
-
+    }
     public static RequestSpecification sendPutRequest(String endpoint, String username, String password,String payload) {
         return RestAssured.given()
                 .auth()
@@ -29,5 +29,14 @@ public class ApiUtils {
                 .body(payload);
 
 
+    }
+    public static Response sendPostRequest(String endpoint, String username, String password,String requestBody) {
+        return RestAssured.given()
+                .auth()
+                .basic(username, password)
+                .contentType("application/json")
+                .body(requestBody)
+                .when()
+                .post(endpoint);
     }
 }
